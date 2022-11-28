@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "module": "System",
+        "target": "ESNext",
+        "noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "outFile": "build/main.js",
+        "sourceMap": true,
+        "strictNullChecks": true,
+        "moduleResolution": "NodeNext",
+        "baseUrl": "src"
+    },
+    "include": [
+        "src/**/*",
+        "tests/**/*"
+    ],
+    "exclude": [
+        "node_modules",
+    ]
+}
