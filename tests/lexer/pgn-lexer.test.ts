@@ -4,9 +4,9 @@ import { TokenType } from "lexer/token-type";
 
 describe("PGN Lexer correctly lexes given well-formed and malformed inputs", () => {
     test("With only moves", () => {
-        const pgn: string = "1. e4 e5 2. Nf3 Nc6 3. Nc3 Bc5 *";
+        const pgn: string = "1. e4 e5 2. Nf3 Nc6 3. Nc3 Bc5+ 4. O-O O-O-O# 5. e8=Q e8=N+ *";
         const tokens = [...lexPGN(pgn)];
-        expect(tokens).toHaveLength(10);
+        expect(tokens).toHaveLength(16);
         tokensMatch(tokens, [
             {
                 tokenType: TokenType.MoveNumberWhite,
@@ -42,7 +42,31 @@ describe("PGN Lexer correctly lexes given well-formed and malformed inputs", () 
             },
             {
                 tokenType: TokenType.Move,
-                value: "Bc5"
+                value: "Bc5+"
+            },
+            {
+                tokenType: TokenType.MoveNumberWhite,
+                value: "4"
+            },
+            {
+                tokenType: TokenType.Move,
+                value: "O-O"
+            },
+            {
+                tokenType: TokenType.Move,
+                value: "O-O-O#"
+            },
+            {
+                tokenType: TokenType.MoveNumberWhite,
+                value: "5"
+            },
+            {
+                tokenType: TokenType.Move,
+                value: "e8=Q"
+            },
+            {
+                tokenType: TokenType.Move,
+                value: "e8=N+"
             },
             {
                 tokenType: TokenType.GameResult,

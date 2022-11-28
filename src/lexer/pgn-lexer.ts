@@ -41,7 +41,7 @@ export function* lexPGN(pgn: string): Generator<Token, null> {
         } else if (pgn.charAt(currentIndex) === " ") {
             currentIndex = advanceToNonWhitespace(pgn, currentIndex);
         } else {
-            throw new Error("PGN badly formed");
+            throw new Error(`PGN badly formed at col ${currentIndex}: ${pgn[currentIndex]}`);
         }
     }
     return null;

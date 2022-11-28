@@ -10,7 +10,7 @@ export function isMove(pgn: string, index: number) {
 
 // I had considered using a state machine to validate. But honestly the regex works fine. The state machine is overkill.
 export function lexMove(pgn: string, index: number): { token: Token, nextIndex: number } {
-    const regex = /[RNBQK]?[a-h]?[1-8]?x?(?<!^(?:K?[a-h1-8]|[1-8]?x))[a-h][1-8](?:(?<![RNBQK1-7].*)=[RNBQK])?(?:\+|#)?|O-O(?:-O)?/y;
+    const regex = /[RNBQK]?[a-h]?[1-8]?x?(?<!^(?:K?[a-h1-8]|[1-8]?x))[a-h][1-8](?:(?<![RNBQK1-7].*)=[RNBQK])?[+#]?|O-O(?:-O)?[+#]?/y;
     const match = regexExecFrom(regex, pgn, index);
     if (!match) {
         throw new Error("Move badly formed");

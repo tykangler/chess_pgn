@@ -3,7 +3,7 @@ import { Transition } from "./transition";
 
 export class StateMachine<StateType, InputType> {
     private _history: StateType[];
-    private _currentState: StateType;
+    private _currentState: StateType | null;
     private _done: boolean;
     private readonly _input: Iterator<InputType>
     // unlikely to have many transitions, so use plist of transitions which is faster than hashtable
@@ -33,23 +33,32 @@ export class StateMachine<StateType, InputType> {
     // if the transition returns null, this will be treated as invalid state. returns { done: false, state: null }
     // if a valid non-null transition found, returns { done: false, state: state };
     public transition(): StateResult<StateType> {
+        const doneState = { done: true, state: null };
+        const invalidState = { done: false, state: null };
         if (this._done) {
-            return { done: true, state: null };
+            return doneState;
+        } else if (this._currentState === null) {
+            return invalidState;
         }
         let currValue = this._input.next();
         if (currValue.done) {
             this._done = true;
-            return { done: true, state: null };
+            this._history.push(this._currentState);
+            this._currentState = null;
+            return doneState;
         }
         let transition = this.transitions.find(t => t.srcState === this._currentState);
         if (!transition) {
-            return { done: false, state: null };
+            this._history.push(this._currentState);
+            this._currentState = null;
+            return invalidState;
         } else {
             let dstState = transition.transition(currValue.value, this);
-            if (dstState === null) {
-                return { done: false, state: null };
-            }
             this._history.push(this._currentState);
+            if (dstState === null) {
+                this._currentState = null;
+                return invalidState;
+            }
             this._currentState = dstState;
             return { done: false, state: dstState };
         }
