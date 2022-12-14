@@ -19,7 +19,7 @@ export function* lexPGN(pgn: string): Generator<Token, null> {
             currentIndex = nextIndex;
             yield token;
         } else if (isMove(pgn, currentIndex)) {
-            const { token, nextIndex } = lexMove(pgn, currentIndex);
+            const { token, nextIndex } = lexMove(pgn, currentIndex); 
             currentIndex = nextIndex;
             yield token;
         } else if (isStartVariation(pgn, currentIndex)) {
@@ -42,7 +42,7 @@ export function* lexPGN(pgn: string): Generator<Token, null> {
             currentIndex = advanceToNonWhitespace(pgn, currentIndex);
         } else {
             throw new Error(`PGN badly formed at col ${currentIndex}: ${pgn[currentIndex]}`);
-        }
+        } 
     }
     return null;
 }

@@ -1,3 +1,11 @@
+{
+	function parseInt(s) {
+    	let val = +s;
+        if (val) return val;
+        else return null;
+    }
+}
+
 Pgn = games:Game* { return games }
 
 Game = tags:TagPair* "\n"* moves:MoveTextSection "\n"* {
@@ -19,7 +27,7 @@ Move = whiteMove:WhiteMove WsReq blackMove:BlackMove {
     }
 }
 
-WhiteMove = preComment:Comment? WsOpt moveNumber:MoveNumberWhite WsOpt san:San postComment:(WsOpt Comment)? {
+WhiteMove = preComment:Comment? WsOpt moveNumber:MoveNumberWhite WsOpt san:San postComment:(WsOpt MoveDetails)? {
 	return { moveNumber, whiteMove: { preComment, ...san, postComment: postComment ? postComment[1] : null } }
 }
 
@@ -31,7 +39,25 @@ MoveNumberWhite = num:$([1-9]+) "." { return num; }
 
 MoveNumberBlack = num:$([1-9]+) "..." { return num; }
 
-RecursiveVariation = "(" WsOpt MoveTextSection WsOpt ")"    
+RecursiveVariation = "(" WsOpt moves:MoveTextSection WsOpt ")" { return moves; }
+
+Comment = "{" comment:$([^}]*) "}" { return comment; }
+
+Nag = "$" nag:$([1-9]) & { return arguments.length <= 3; } { return parseInt(nag); }
+
+MoveDetails = details:(WsOpt (RecursiveVariation / Comment / Nag))* & { 
+	let commentEncountered = false;
+    let nagEncountered = false;
+    for (let arg of arguments) {
+    	if (typeof arg == "string") {
+        	if (commentEncountered) { return false; }
+            else { commentEncountered = true; }
+        } else if (typeof arg == "number") {
+        	if (nagEncountered) { return false; }
+            else { nagEncountered = true; }
+        }
+    }
+} { return details }
 
 // san
 San = 
@@ -66,7 +92,6 @@ Check = [+#]
 
 Piece = [QBNRK]
 
-Comment = "{" comment:$([^}]*) "}" { return comment; }
 
 WsOpt = " "*
 
